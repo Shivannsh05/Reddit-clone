@@ -1,0 +1,64 @@
+model User {
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  password  String
+  name      String
+  posts     Post[]
+  comments  Comment[]
+  votes     Vote[]
+}
+
+model Community {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  description String
+  posts       Post[]
+}
+
+model Post {
+  id            Int          @id @default(autoincrement())
+  title         String
+  content       String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  communityId   Int
+  community     Community    @relation(fields: [communityId], references: [id])
+  userId        Int
+  user          User         @relation(fields: [userId], references: [id])
+  comments      Comment[]
+  votes         Vote[]
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  content   String
+  createdAt DateTime  @default(now())
+  postId    Int
+  post      Post      @relation(fields: [postId], references: [id])
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+}
+
+enum VoteType {
+  UPVOTE
+  DOWNVOTE
+}
+
+model Vote {
+  id        Int       @id @default(autoincrement())
+  voteType  VoteType    // "UPVOTE" or "DOWNVOTE"
+  postId    Int
+  post      Post      @relation(fields: [postId], references: [id])
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"  // or "mysql", depending on your database
+  url      = env("DATABASE_URL")
+}
+
