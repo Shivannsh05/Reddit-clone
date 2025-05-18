@@ -1,19 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Correct typing for App Router route handlers
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { postId: string } }
-) {
-  const { postId } = params;
-
+export async function POST(req: NextRequest) {
   const token = req.headers.get("authorization")?.replace("Bearer ", "");
 
   if (!token) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const { content } = await req.json();
+  const { content, postId } = await req.json();
+
+  if (!postId) {
+    return NextResponse.json({ message: "Post ID missing" }, { status: 400 });
+  }
 
   console.log(`New comment on post ${postId}: ${content} from token: ${token}`);
 
