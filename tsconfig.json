@@ -9,8 +9,8 @@
     "noEmit": false,
     "outDir": "./dist",
     "esModuleInterop": true,
-    "module": "commonjs",
-    "moduleResolution": "node",  // Changed to 'node' to support Node.js resolution
+    "module": "ESNext",
+    "moduleResolution": "node", // Changed to 'node' to support Node.js resolution
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",

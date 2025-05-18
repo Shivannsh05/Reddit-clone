@@ -1,4 +1,4 @@
-import { createUploadthing, generateComponents } from "uploadthing"; // <-- from package, NOT from local file
+import { createUploadthing, generateComponents } from "uploadthing";
 
 // Initialize the UploadThing function
 const f = createUploadthing();
@@ -18,6 +18,7 @@ export type OurFileRouter = typeof ourFileRouter;
 
 // Generate Upload components without type argument (to avoid TS error)
 export const { UploadButton, UploadDropzone, Uploader } = generateComponents();
+
 
 
 

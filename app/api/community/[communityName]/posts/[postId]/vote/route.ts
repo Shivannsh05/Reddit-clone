@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';  // Use getServerSession for Edge compatibility
-import { authOptions } from '@/pages/api/auth/[...nextauth]'; // Import your NextAuth options
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'; // Import your NextAuth options
 import prisma from '@/lib/prisma';  // Adjust the import to match your actual setup
 
 export async function POST(request: Request, { params }: { params: { communityName: string; postId: string } }) {
