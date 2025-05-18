@@ -1,10 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import dynamic from 'next/dynamic';
+import CommentForm from '@/components/ClientCommentFormWrapper'; // ✅ Now importing client wrapper
 
 const prisma = new PrismaClient();
-
-// Dynamically import the client-side comment form to prevent hydration issues
-const CommentForm = dynamic(() => import('@/components/CommentForm'), { ssr: false });
 
 export default async function PostDetailPage({ params }: { params: { postId: string; communityName: string } }) {
   const postId = parseInt(params.postId, 10);
@@ -34,9 +31,8 @@ export default async function PostDetailPage({ params }: { params: { postId: str
 
       <div className="mb-8">
         <h2 className="text-lg font-semibold mb-2">Add a Comment</h2>
-        {/* Protected Comment Form – rendered only for logged-in users via client logic */}
+        {/* Client-side Comment Form */}
         <CommentForm postId={post.id} />
-
       </div>
 
       <div>
@@ -55,6 +51,7 @@ export default async function PostDetailPage({ params }: { params: { postId: str
     </div>
   );
 }
+
 
 
 
