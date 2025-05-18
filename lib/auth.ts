@@ -1,9 +1,7 @@
-// lib/auth.ts
+import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
-import type { NextAuthOptions, Session, User } from "next-auth";
-import type { JWT } from "next-auth/jwt";
+import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -22,39 +20,35 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email },
         });
 
-        if (!user) return null;
+        if (!user || !(await bcrypt.compare(credentials.password, user.password))) {
+          return null;
+        }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!isPasswordValid) return null;
-
+        // ✅ Convert ID to string as required by NextAuth
         return {
           id: user.id.toString(),
           email: user.email,
           name: user.name,
-        } as User;
+        };
       },
     }),
   ],
+  pages: {
+    signIn: "/auth/signin",
+  },
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user?: User | null }) {
+    async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.email = user.email;
+        token.id = user.id; // string
       }
       return token;
     },
-    async session({ session, token }: { session: Session; token: JWT & { id?: string } }) {
-      if (session.user) {
-        session.user.id = token.id!;
+    async session({ session, token }) {
+      if (session.user && token.id) {
+        session.user.id = token.id; // string
       }
       return session;
     },
   },
-  pages: {
-    signIn: "/auth/signin",
-  },
 };
+
