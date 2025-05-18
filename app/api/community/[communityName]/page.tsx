@@ -13,7 +13,7 @@ export default function PostListPage({ params }: { params: { communityName: stri
     const fetchPosts = async () => {
       setLoading(true);
       const sortBy = router.query.sortBy || ''; // Get the sort parameter
-      const res = await fetch(`/api/posts/${communityName}?sortBy=${sortBy}`);
+      const res = await fetch(`/api/community/${communityName}/route?sortBy=${sortBy}`);
       const data = await res.json();
       setPosts(data);
       setLoading(false);
