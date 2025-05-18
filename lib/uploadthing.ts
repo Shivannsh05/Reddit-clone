@@ -1,6 +1,6 @@
 // lib/uploadthing.ts
 import { createUploadthing, type FileRouter } from "uploadthing/server";
-import { generateComponents } from "@uploadthing/react"; // ✅ Use the correct function for your version
+import { UploadButton } from "@uploadthing/react";
 
 // Initialize the UploadThing handler
 const f = createUploadthing();
@@ -16,8 +16,10 @@ export const ourFileRouter = {
 // Export type for the router
 export type OurFileRouter = typeof ourFileRouter;
 
-// ✅ Generate components without passing type args (not needed in this version)
-export const { UploadButton, UploadDropzone, Uploader } = generateComponents();
+// Export the UploadButton component
+export { UploadButton };
+
+
 
 
 

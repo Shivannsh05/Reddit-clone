@@ -1,3 +1,5 @@
+// app/api/auth/[...nextauth]/route.ts
+
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
@@ -5,7 +7,8 @@ import prisma from "@/lib/prisma";
 import type { NextAuthOptions, Session, User } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 
-export const authOptions: NextAuthOptions = {
+// Define authOptions separately and do not export it directly
+const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -22,18 +25,14 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email },
         });
 
-        if (!user) {
-          return null;
-        }
+        if (!user) return null;
 
         const isPasswordValid = await bcrypt.compare(
           credentials.password,
           user.password
         );
 
-        if (!isPasswordValid) {
-          return null;
-        }
+        if (!isPasswordValid) return null;
 
         return {
           id: user.id.toString(),
@@ -44,26 +43,14 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({
-      token,
-      user,
-    }: {
-      token: JWT;
-      user?: User | null;
-    }) {
+    async jwt({ token, user }: { token: JWT; user?: User | null }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
       }
       return token;
     },
-    async session({
-      session,
-      token,
-    }: {
-      session: Session;
-      token: JWT & { id?: string };
-    }) {
+    async session({ session, token }: { session: Session; token: JWT & { id?: string } }) {
       if (session.user) {
         session.user.id = token.id!;
       }
@@ -75,8 +62,9 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
+// Export route handlers only
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };
+
 
 
