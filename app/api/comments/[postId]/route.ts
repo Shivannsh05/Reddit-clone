@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { postId: string } }
+  context: { params: { postId: string } }
 ) {
+  const { postId } = context.params;
+
   const token = req.headers.get('authorization')?.replace('Bearer ', '');
 
   if (!token) {
@@ -13,7 +15,8 @@ export async function POST(
   const { content } = await req.json();
 
   // TODO: Save the comment to your DB instead of logging
-  console.log(`New comment on post ${params.postId}: ${content} from token: ${token}`);
+  console.log(`New comment on post ${postId}: ${content} from token: ${token}`);
 
   return NextResponse.json({ message: 'Comment added successfully' });
 }
+
