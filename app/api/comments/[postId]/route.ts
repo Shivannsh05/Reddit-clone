@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Correct typing for App Router route handlers
 export async function POST(
   req: NextRequest,
-  context: { params: { postId: string } }
+  { params }: { params: { postId: string } }
 ) {
-  const { postId } = context.params;
+  const { postId } = params;
 
   const token = req.headers.get("authorization")?.replace("Bearer ", "");
 
@@ -18,6 +19,7 @@ export async function POST(
 
   return NextResponse.json({ message: "Comment added successfully" });
 }
+
 
 
 
