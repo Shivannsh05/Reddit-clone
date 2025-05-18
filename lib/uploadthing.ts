@@ -1,4 +1,4 @@
-import { createUploadthing, generateComponents } from "uploadthing";  // <-- from package, NOT from local file
+import { createUploadthing, generateComponents } from "uploadthing"; // <-- from package, NOT from local file
 
 // Initialize the UploadThing function
 const f = createUploadthing();
