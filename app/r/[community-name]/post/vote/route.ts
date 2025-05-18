@@ -1,21 +1,21 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server"
 
-type VoteRequest = {
-  postId: string;
-  voteType: 'upvote' | 'downvote';
-};
+// ✅ Correct second parameter typing
+export async function POST(
+  req: NextRequest,
+  context: { params: Record<string, string> }
+) {
+  const { postId } = context.params
 
-let mockDB: Record<string, number> = {}; // Mock DB for now
+  const token = req.headers.get("authorization")?.replace("Bearer ", "")
+  if (!token) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
+  }
 
-export async function POST(req: Request) {
-  const body: VoteRequest = await req.json();
-  const { postId, voteType } = body;
+  const { content } = await req.json()
 
-  // Simulate DB vote update
-  const currentVotes = mockDB[postId] ?? 0;
-  const updatedVotes = voteType === 'upvote' ? currentVotes + 1 : currentVotes - 1;
+  console.log(`New comment on post ${postId}: ${content} from token: ${token}`)
 
-  mockDB[postId] = updatedVotes;
-
-  return NextResponse.json({ success: true, votes: updatedVotes });
+  return NextResponse.json({ message: "Comment added successfully" })
 }
+
