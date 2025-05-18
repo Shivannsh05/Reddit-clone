@@ -1,23 +1,27 @@
-import { createUploadthing, generateComponents } from "uploadthing";
+// lib/uploadthing.ts
+import { createUploadthing, type FileRouter } from "uploadthing/server";
+import { generateComponents } from "@uploadthing/react"; // ✅ Use the correct function for your version
 
-// Initialize the UploadThing function
+// Initialize the UploadThing handler
 const f = createUploadthing();
 
-// Define the file router configuration
+// Define your file router
 export const ourFileRouter = {
-  imageUploader: f({
-    image: { maxFileSize: "4MB", maxFileCount: 1 },
-  }).onUploadComplete(async ({ metadata, file }: { metadata: unknown; file: { url: string } }) => {
-    console.log("Upload completed:", file.url);
-    // You can store file.url in your DB here
-  }),
+  imageUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
+    .onUploadComplete(async ({ file }) => {
+      console.log("File uploaded:", file.url);
+    }),
 };
 
-// Export the type for use in the route handler or elsewhere
+// Export type for the router
 export type OurFileRouter = typeof ourFileRouter;
 
-// Generate Upload components without type argument (to avoid TS error)
+// ✅ Generate components without passing type args (not needed in this version)
 export const { UploadButton, UploadDropzone, Uploader } = generateComponents();
+
+
+
+
 
 
 

@@ -1,6 +1,13 @@
-import { createRouteHandler } from "uploadthing/next";
-import { ourFileRouter } from "@/lib/uploadthing";
+import { createUploadthing, type FileRouter } from "uploadthing/server";
 
-export const { GET, POST } = createRouteHandler({
-  router: ourFileRouter,
-});
+const f = createUploadthing();
+
+export const ourFileRouter = {
+  // Example config - modify as needed
+  imageUploader: f({ image: { maxFileSize: "4MB" } })
+    .onUploadComplete(({ file }) => {
+      console.log("Upload complete for file:", file.url);
+    }),
+} satisfies FileRouter;
+
+export type OurFileRouter = typeof ourFileRouter;
