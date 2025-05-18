@@ -10,9 +10,9 @@ export default function CommentForm({ postId }: { postId: number }) {
     e.preventDefault()
     setLoading(true)
 
-    await fetch('/api/comments', {
+    await fetch('/api/comments/${postId}', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', },
       body: JSON.stringify({ postId, content }),
     })
 
