@@ -70,5 +70,3 @@ export default function PostListPage({ params }: PageProps) {
     </div>
   );
 }
-
-
