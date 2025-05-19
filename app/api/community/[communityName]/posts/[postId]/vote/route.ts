@@ -3,8 +3,18 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
-export async function POST(request: Request, { params }: { params: Record<string, string> }) {
-  const { communityName, postId } = params;
+export async function POST(request: Request) {
+  // Parse URL and extract params from pathname
+  const url = new URL(request.url);
+  const pathname = url.pathname; // example: /api/community/myCommunity/posts/123/vote
+
+  // Extract communityName and postId from pathname by splitting
+  const parts = pathname.split('/');
+  // Assuming the route is: /api/community/[communityName]/posts/[postId]/vote
+  // So communityName is parts[3], postId is parts[5]
+  const communityName = parts[3];
+  const postId = parts[5];
+
   const { type } = await request.json();
 
   if (!['upvote', 'downvote'].includes(type)) {
@@ -13,11 +23,10 @@ export async function POST(request: Request, { params }: { params: Record<string
 
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user || !session.user.id) {
+    if (!session?.user?.id) {
       return NextResponse.json({ message: 'User not authenticated' }, { status: 401 });
     }
 
-    // Ensure userId is a number (or parse if string)
     const userId = typeof session.user.id === 'string' ? parseInt(session.user.id, 10) : session.user.id;
     const postIdInt = parseInt(postId, 10);
 
@@ -44,7 +53,7 @@ export async function POST(request: Request, { params }: { params: Record<string
     const totalVotes = upvotes - downvotes;
 
     const existingVote = await prisma.vote.findFirst({
-      where: { postId: postIdInt, userId: userId },
+      where: { postId: postIdInt, userId },
     });
 
     if (existingVote) {
@@ -56,7 +65,7 @@ export async function POST(request: Request, { params }: { params: Record<string
       await prisma.vote.create({
         data: {
           postId: postIdInt,
-          userId: userId,
+          userId,
           voteType: type === 'upvote' ? 'UPVOTE' : 'DOWNVOTE',
         },
       });
@@ -68,6 +77,7 @@ export async function POST(request: Request, { params }: { params: Record<string
     return NextResponse.json({ message: 'Error updating vote' }, { status: 500 });
   }
 }
+
 
 
 
