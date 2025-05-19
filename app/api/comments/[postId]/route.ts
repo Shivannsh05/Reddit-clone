@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Record<string, string> } // 👈 FIXED HERE
+  context: { params: { postId: string } }
 ) {
-  const postId = params.postId
+  const postId = context.params.postId
 
   const token = req.headers.get("authorization")?.replace("Bearer ", "")
   if (!token) {
