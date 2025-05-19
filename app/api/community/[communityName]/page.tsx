@@ -1,18 +1,26 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useSearchParams, useRouter } from 'next/navigation';
 
-export default function PostListPage({ params }: { params: { communityName: string } }) {
+interface PageProps {
+  params: {
+    communityName: string;
+  };
+}
+
+export default function PostListPage({ params }: PageProps) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const sortBy = searchParams.get('sortBy') || '';
   const { communityName } = params;
 
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
-      const sortBy = router.query.sortBy || ''; // Get the sort parameter
       const res = await fetch(`/api/community/${communityName}/route?sortBy=${sortBy}`);
       const data = await res.json();
       setPosts(data);
@@ -20,7 +28,7 @@ export default function PostListPage({ params }: { params: { communityName: stri
     };
 
     fetchPosts();
-  }, [communityName, router.query.sortBy]);
+  }, [communityName, sortBy]);
 
   return (
     <div className="p-4">
@@ -51,7 +59,9 @@ export default function PostListPage({ params }: { params: { communityName: stri
             <h2 className="text-xl font-semibold">{post.title}</h2>
             <p className="text-gray-600">{post.content}</p>
             <div className="flex justify-between items-center mt-2">
-              <span className="text-sm text-gray-500">Posted on {new Date(post.createdAt).toLocaleDateString()}</span>
+              <span className="text-sm text-gray-500">
+                Posted on {new Date(post.createdAt).toLocaleDateString()}
+              </span>
               <span className="text-sm text-gray-500">Votes: {post.votes}</span>
             </div>
           </div>
@@ -60,4 +70,5 @@ export default function PostListPage({ params }: { params: { communityName: stri
     </div>
   );
 }
+
 
